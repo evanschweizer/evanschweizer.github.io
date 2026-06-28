@@ -1,274 +1,238 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Evan Schweizer | Loading...</title>
-
-<style>
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    min-height: 100vh;
-    background: #0d1117;
-    color: #c9d1d9;
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    padding: 24px;
-    overflow-y: auto;
-}
-
-.terminal {
-    width: min(720px, 100%);
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 12px;
-    padding: 32px;
-
-    box-shadow: 0 20px 50px rgba(0,0,0,.4);
-}
-
-.header {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 24px;
-}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Evan Schweizer | Loading...</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #0d1117;
+        color: #c9d1d9;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding: 24px;
+        overflow-y: auto;
+      }
+
+      .terminal {
+        width: min(720px, 100%);
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        padding: 32px;
+
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      }
+
+      .header {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #484f58;
+      }
+
+      .line {
+        margin: 10px 0;
+        line-height: 1.5;
+      }
+
+      .green {
+        color: #7ee787;
+      }
+
+      .blue {
+        color: #58a6ff;
+      }
+
+      .dim {
+        color: #8b949e;
+      }
+
+      .progress-container {
+        margin-top: 10px;
+        font-size: 18px;
+      }
+
+      .progress {
+        letter-spacing: 2px;
+      }
+
+      .cursor {
+        display: inline-block;
+        width: 8px;
+        height: 18px;
+        background: #c9d1d9;
+        animation: blink 1s infinite;
+      }
+
+      @media (max-height: 700px) {
+        body {
+          align-items: flex-start;
+          padding-top: 20px;
+        }
+      }
 
-.dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #484f58;
-}
+      @media (max-width: 600px) {
+        .terminal {
+          padding: 20px;
+          font-size: 14px;
+        }
+      }
 
-.line {
-    margin: 10px 0;
-    line-height: 1.5;
-}
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
 
-.green {
-    color: #7ee787;
-}
+  <body>
+    <div class="terminal">
+      <div class="header">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
 
-.blue {
-    color: #58a6ff;
-}
+      <div id="terminal-output"></div>
+    </div>
 
-.dim {
-    color: #8b949e;
-}
+    <script>
+      const terminal = document.getElementById("terminal-output");
 
-.progress-container {
-    margin-top: 10px;
-    font-size: 18px;
-}
+      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-.progress {
-    letter-spacing: 2px;
-}
+      async function typeText(text, className = "", speed = 35) {
+        const line = document.createElement("div");
+        line.className = "line " + className;
 
-.cursor {
-    display: inline-block;
-    width: 8px;
-    height: 18px;
-    background: #c9d1d9;
-    animation: blink 1s infinite;
-}
+        terminal.appendChild(line);
 
-@media (max-height: 700px) {
+        for (let char of text) {
+          line.textContent += char;
+          await sleep(speed);
+        }
 
-    body {
-        align-items: flex-start;
-        padding-top: 20px;
-    }
+        return line;
+      }
 
-}
+      async function addLine(text, className = "") {
+        const line = document.createElement("div");
+        line.className = "line " + className;
+        line.textContent = text;
 
-@media (max-width: 600px) {
+        terminal.appendChild(line);
 
-    .terminal {
-        padding: 20px;
-        font-size: 14px;
-    }
+        await sleep(400);
+      }
 
-}
+      async function progressBar() {
+        const container = document.createElement("div");
+        container.className = "progress-container";
 
-@keyframes blink {
-    50% {
-        opacity: 0;
-    }
-}
-</style>
-</head>
+        terminal.appendChild(container);
 
+        let value = 0;
 
-<body>
+        while (value < 100) {
+          value += Math.random() * 8;
 
-<div class="terminal">
+          if (value > 100) value = 100;
 
-<div class="header">
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-</div>
+          const blocks = Math.floor(value / 10);
 
+          container.textContent =
+            "█".repeat(blocks) +
+            "░".repeat(10 - blocks) +
+            ` ${Math.floor(value)}%`;
 
-<div class="line">
-<span class="green">$</span> ollama run evan-schweizer-v1
-</div>
+          await sleep(250);
+        }
+      }
 
-<div class="line dim">
-pulling model...
-</div>
+      async function boot() {
+        await typeText("$ ollama run evan-schweizer-v1", "green");
 
-<div class="line">
-⠋ Loading weights...
-</div>
+        await sleep(700);
 
+        await addLine("pulling model manifest...", "dim");
 
-<br>
+        await addLine("fetching architecture layers...", "dim");
 
+        await sleep(500);
 
-<div class="line">
-Architecture:
-</div>
+        await addLine("⠋ Loading weights...");
 
-<div class="line">
-&nbsp;&nbsp;├── Statistics
-</div>
+        await sleep(500);
 
-<div class="line">
-&nbsp;&nbsp;├── Data Science
-</div>
+        await addLine("Architecture:");
 
-<div class="line">
-&nbsp;&nbsp;├── Machine Learning
-</div>
+        await addLine("  ├── Statistics");
 
-<div class="line">
-&nbsp;&nbsp;├── Generative AI
-</div>
+        await addLine("  ├── Data Science");
 
-<div class="line">
-&nbsp;&nbsp;└── Computer Vision
-</div>
+        await addLine("  ├── Machine Learning");
 
+        await addLine("  ├── Generative AI");
 
-<br>
+        await addLine("  └── Computer Vision");
 
+        await sleep(500);
 
-<div class="line">
-Initializing knowledge base...
-</div>
+        await addLine("Initializing knowledge base...");
 
-<div class="line green">
-✓ Professional experience loaded
-</div>
+        await addLine("✓ Professional experience loaded", "green");
 
-<div class="line green">
-✓ Projects indexed
-</div>
+        await addLine("✓ Projects indexed", "green");
 
-<div class="line green">
-✓ Portfolio embeddings generated
-</div>
+        await addLine("✓ Portfolio embeddings generated", "green");
 
+        await sleep(700);
 
-<br>
+        await addLine("Generating evanschweizer.com...", "blue");
 
+        await addLine("Context window:");
 
-<div class="line blue">
-Generating evanschweizer.com...
-</div>
+        await addLine("8,421 tokens processed");
 
+        await sleep(500);
 
-<div class="line">
-Context window:
-</div>
+        await addLine("Model status:");
 
-<div class="line">
-8,421 tokens processed
-</div>
+        await progressBar();
 
+        await sleep(800);
 
-<br>
+        await addLine("Response:", "green");
 
+        await typeText('"Website coming soon."');
 
-<div class="line">
-Model status:
-</div>
+        const cursor = document.createElement("span");
+        cursor.className = "cursor";
 
-<div class="progress-container">
-<span id="progress" class="progress"></span>
-<span id="percent"></span>
-</div>
+        terminal.appendChild(cursor);
+      }
 
-
-<br>
-
-
-<div class="line green">
-Response:
-</div>
-
-<div class="line">
-"Website coming soon."
-</div>
-
-
-<br>
-
-<div class="cursor"></div>
-
-
-</div>
-
-
-<script>
-
-const progress = document.getElementById("progress");
-const percent = document.getElementById("percent");
-
-let value = 80;
-let direction = 1;
-
-function updateProgress() {
-
-    value += direction * Math.random() * 2;
-
-    if (value >= 90) {
-        direction = -1;
-    }
-
-    if (value <= 72) {
-        direction = 1;
-    }
-
-    const blocks = Math.floor(value / 10);
-
-    progress.textContent =
-        "█".repeat(blocks) +
-        "░".repeat(10 - blocks);
-
-    percent.textContent =
-        ` ${Math.floor(value)}%`;
-
-}
-
-setInterval(updateProgress, 300);
-
-updateProgress();
-
-</script>
-
-
-</body>
+      boot();
+    </script>
+  </body>
 </html>
