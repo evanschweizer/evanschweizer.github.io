@@ -1,3 +1,3 @@
 # evanschweizer.github.io
 
-Come and chill: <evanschweizer.com>
+Come and chill: evanschweizer.com
