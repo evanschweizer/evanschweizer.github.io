@@ -1,2 +1,3 @@
 # evanschweizer.github.io
-Personal GitHub page
+
+Come and chill: <evanschweizer.com>
