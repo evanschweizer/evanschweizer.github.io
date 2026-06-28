@@ -75,6 +75,11 @@
         letter-spacing: 2px;
       }
 
+      .spacer {
+        height: 8px;
+        margin: 12px 0;
+      }
+
       .cursor {
         display: inline-block;
         width: 8px;
@@ -121,14 +126,21 @@
 
       const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+      function scrollToBottom() {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+
       async function typeText(text, className = "", speed = 35) {
         const line = document.createElement("div");
         line.className = "line " + className;
-
         terminal.appendChild(line);
 
-        for (let char of text) {
+        for (const char of text) {
           line.textContent += char;
+          scrollToBottom();
           await sleep(speed);
         }
 
@@ -141,95 +153,100 @@
         line.textContent = text;
 
         terminal.appendChild(line);
+        scrollToBottom();
 
-        await sleep(400);
+        await sleep(300);
+      }
+
+      function addBreak() {
+        const spacer = document.createElement("div");
+        spacer.className = "line spacer";
+        terminal.appendChild(spacer);
+        scrollToBottom();
       }
 
       async function progressBar() {
         const container = document.createElement("div");
         container.className = "progress-container";
-
         terminal.appendChild(container);
 
         let value = 0;
+        const target = 100;
 
-        while (value < 100) {
-          value += Math.random() * 8;
+        while (value < target) {
+          const baseStep = Math.random() * 6 + 2;
+          const wobble = Math.random() > 0.35 ? Math.random() * 2 : -Math.random() * 1.5;
+          const step = Math.max(1, baseStep + wobble);
 
-          if (value > 100) value = 100;
+          value = Math.min(target, value + step);
+
+          if (value >= 92) {
+            value = target;
+          }
 
           const blocks = Math.floor(value / 10);
-
           container.textContent =
             "█".repeat(blocks) +
             "░".repeat(10 - blocks) +
-            ` ${Math.floor(value)}%`;
+            ` ${Math.round(value)}%`;
 
-          await sleep(250);
+          scrollToBottom();
+          await sleep(180);
         }
       }
 
       async function boot() {
         await typeText("$ ollama run evan-schweizer-v1", "green");
 
+        addBreak();
         await sleep(700);
 
         await addLine("pulling model manifest...", "dim");
-
         await addLine("fetching architecture layers...", "dim");
 
         await sleep(500);
-
         await addLine("⠋ Loading weights...");
 
+        addBreak();
         await sleep(500);
 
         await addLine("Architecture:");
-
         await addLine("  ├── Statistics");
-
         await addLine("  ├── Data Science");
-
         await addLine("  ├── Machine Learning");
-
         await addLine("  ├── Generative AI");
-
         await addLine("  └── Computer Vision");
 
+        addBreak();
         await sleep(500);
 
         await addLine("Initializing knowledge base...");
-
         await addLine("✓ Professional experience loaded", "green");
-
         await addLine("✓ Projects indexed", "green");
-
         await addLine("✓ Portfolio embeddings generated", "green");
 
+        addBreak();
         await sleep(700);
 
         await addLine("Generating evanschweizer.com...", "blue");
-
         await addLine("Context window:");
-
         await addLine("8,421 tokens processed");
 
+        addBreak();
         await sleep(500);
 
         await addLine("Model status:");
-
         await progressBar();
 
         await sleep(800);
 
         await addLine("Response:", "green");
-
         await typeText('"Website coming soon."');
 
         const cursor = document.createElement("span");
         cursor.className = "cursor";
-
         terminal.appendChild(cursor);
+        scrollToBottom();
       }
 
       boot();
