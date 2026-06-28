@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Evan Schweizer | Loading...</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: #0d1117;
+    color: #c9d1d9;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.terminal {
+    width: min(720px, 90%);
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.4);
+}
+
+.header {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #484f58;
+}
+
+.line {
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+.green {
+    color: #7ee787;
+}
+
+.blue {
+    color: #58a6ff;
+}
+
+.dim {
+    color: #8b949e;
+}
+
+.progress-container {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.progress {
+    letter-spacing: 2px;
+}
+
+.cursor {
+    display: inline-block;
+    width: 8px;
+    height: 18px;
+    background: #c9d1d9;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="terminal">
+
+<div class="header">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+</div>
+
+
+<div class="line">
+<span class="green">$</span> ollama run evan-schweizer-v1
+</div>
+
+<div class="line dim">
+pulling model...
+</div>
+
+<div class="line">
+⠋ Loading weights...
+</div>
+
+
+<br>
+
+
+<div class="line">
+Architecture:
+</div>
+
+<div class="line">
+&nbsp;&nbsp;├── Statistics
+</div>
+
+<div class="line">
+&nbsp;&nbsp;├── Data Science
+</div>
+
+<div class="line">
+&nbsp;&nbsp;├── Machine Learning
+</div>
+
+<div class="line">
+&nbsp;&nbsp;├── Generative AI
+</div>
+
+<div class="line">
+&nbsp;&nbsp;└── Computer Vision
+</div>
+
+
+<br>
+
+
+<div class="line">
+Initializing knowledge base...
+</div>
+
+<div class="line green">
+✓ Berkeley education loaded
+</div>
+
+<div class="line green">
+✓ Professional experience loaded
+</div>
+
+<div class="line green">
+✓ Projects indexed
+</div>
+
+<div class="line green">
+✓ Portfolio embeddings generated
+</div>
+
+
+<br>
+
+
+<div class="line blue">
+Generating evanschweizer.com...
+</div>
+
+
+<div class="line">
+Context window:
+</div>
+
+<div class="line">
+8,421 tokens processed
+</div>
+
+
+<br>
+
+
+<div class="line">
+Model status:
+</div>
+
+<div class="progress-container">
+<span id="progress" class="progress"></span>
+<span id="percent"></span>
+</div>
+
+
+<br>
+
+
+<div class="line green">
+Response:
+</div>
+
+<div class="line">
+"Website coming soon."
+</div>
+
+
+<br>
+
+<div class="cursor"></div>
+
+
+</div>
+
+
+<script>
+
+const progress = document.getElementById("progress");
+const percent = document.getElementById("percent");
+
+let value = 80;
+let direction = 1;
+
+function updateProgress() {
+
+    value += direction * Math.random() * 2;
+
+    if (value >= 90) {
+        direction = -1;
+    }
+
+    if (value <= 72) {
+        direction = 1;
+    }
+
+    const blocks = Math.floor(value / 10);
+
+    progress.textContent =
+        "█".repeat(blocks) +
+        "░".repeat(10 - blocks);
+
+    percent.textContent =
+        ` ${Math.floor(value)}%`;
+
+}
+
+setInterval(updateProgress, 300);
+
+updateProgress();
+
+</script>
+
+
+</body>
+</html>
